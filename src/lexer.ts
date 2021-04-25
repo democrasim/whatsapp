@@ -1,4 +1,4 @@
-interface CommandArgs{
+export interface CommandArgs{
     commandName:string,
     content:string
 }

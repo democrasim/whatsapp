@@ -1,3 +1,3 @@
 export interface Command{
-    run : (args : string) => void;
+    run : (command : string) => void;
 }
