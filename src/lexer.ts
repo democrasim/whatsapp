@@ -1,4 +1,9 @@
-export function splitToArgs(command: string) {
+interface CommandArgs{
+    commandName:string,
+    content:string
+}
+
+export function splitToArgs(command: string) : CommandArgs {
 
     let headerArgs: string[] = command.split(/(\s)+/g);
     let commandName: string = headerArgs[0];
@@ -11,7 +16,7 @@ export function splitToArgs(command: string) {
         content = command.substr(index);
     }
     return {
-        name: commandName,
+        commandName,
         content
     };
 }
