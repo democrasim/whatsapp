@@ -11,12 +11,13 @@ create().then(client => start(client));
 function start(c) {
     client = c;
     let command:Command=new FlagsCommand(["a","b"],{"c":"c", "d":"d"},["e","f"] )
-  client.onMessage(async message => {
+  client.onAnyMessage(async message => {
       console.log("f");
+    if (message.fromMe) {
         command.run(message, client);
         console.log("fdghfdgh");
       await client.sendText(message.from, '👋 Hello!');
-    
+    }
   });
 }
 
