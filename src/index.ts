@@ -1,20 +1,26 @@
 import { splitToArgs } from './lexer';
 import {Command} from './Command';
 import {FlagsCommand} from './FlagsCommand';
+import {CommandRunner} from './CommandRunner';
 
 let client : Client = null;
 
 import { create, Client } from '@open-wa/wa-automate';
 
+let command:Command=new FlagsCommand(["a","b"],{"c":"c", "d":"d"},["e","f"] );
+
+
 create().then(client => start(client));
 
 function start(c) {
     client = c;
-    let command:Command=new FlagsCommand(["a","b"],{"c":"c", "d":"d"},["e","f"] )
   client.onAnyMessage(async message => {
+    const runner: CommandRunner= new CommandRunner({"walak":command},client)
+
       console.log("f");
     if (message.fromMe) {
-        command.run(message, client);
+        runner.run(message);
+        //command.run(message, client);
         console.log("fdghfdgh");
       await client.sendText(message.from, '👋 Hello!');
     }
@@ -25,4 +31,6 @@ function start(c) {
 console.log(splitToArgs("aaa         dsg     f"));
 
 
-export default client;
+
+// let command:Command=new FlagsCommand(["a","b"],{"c":"c", "d":"d"},["e","f"] )
+// command.run({content:"a b\nc d"}, null);

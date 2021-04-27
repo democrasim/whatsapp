@@ -1,6 +1,5 @@
 import {Command} from './Command';
 import { Message,Client } from '@open-wa/wa-automate';
-import client from './index';
 
 import { splitToArgs, CommandArgs } from './lexer';
 export class FlagsCommand implements Command {
@@ -17,8 +16,8 @@ export class FlagsCommand implements Command {
     run=(command:Message,client:Client)=>{
         let rows:string[]=command.content.split("\n");
         let content:string=rows.shift();
-        let valueFlags:Record<string,string>;
-        let booleans:Record<string, boolean>;
+        let valueFlags:Record<string,string> = {};
+        let booleans:Record<string, boolean> = {};
         for (let key in this.optionalFlags){
             valueFlags[key]=this.optionalFlags[key];
         }
@@ -37,7 +36,7 @@ export class FlagsCommand implements Command {
         });
         for (let key in this.requiredFlags){
             if (!(key in valueFlags)){
-                client.sendText(command.from, "missing requied flag- "+key)
+                client.sendText(command.from, "missing requied flag- "+this.requiredFlags[key])
             }
         }
     }
