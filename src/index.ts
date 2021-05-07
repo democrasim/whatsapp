@@ -2,7 +2,7 @@ import { splitToArgs } from './lexer';
 import { Command } from './Command';
 import { FlagsCommand } from './FlagsCommand';
 import { CommandRunner } from './CommandRunner';
-import listenToIncoimgMessages from './messagingAPI';
+import listenToIncomingMessages from './messagingAPI';
 
 let client: Client = null;
 
@@ -11,7 +11,9 @@ import { create, Client } from '@open-wa/wa-automate';
 let command: Command = new FlagsCommand(["a", "b"], { "c": "c", "d": "d" }, ["e", "f"]);
 
 
-create().then(client => start(client));
+create({
+  headless: false // for debug only
+}).then(client => start(client));
 
 function start(client) {
   client.onAnyMessage(async message => {
@@ -25,7 +27,7 @@ function start(client) {
       //await client.sendText(message.from, '👋 Hello!');
     }
   });
-  listenToIncoimgMessages(client);
+  listenToIncomingMessages(client);
 }
 
 
