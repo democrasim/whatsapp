@@ -7,7 +7,7 @@ export default async function listenToIncoimgMessages(client:Client){
     app.use(express.json());
     app.post('/send_message', (req,res)=>{
         let { phone, message } = req.body;
-        client.sendText((phone+'@c.us') as ChatId, message);
+        client.sendText((`${phone}@c.us`) as ChatId, message);
     })
     app.listen(8081);
 }
