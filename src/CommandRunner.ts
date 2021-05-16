@@ -1,6 +1,6 @@
 import {splitToArgs , CommandArgs} from './lexer';
 import {Command} from './Command';
-import { Message, Client } from '@open-wa/wa-automate';
+import { Message, Client, MessageTypes } from '@open-wa/wa-automate';
 
 export class CommandRunner{
     private commands : Record<string, Command>;
@@ -10,8 +10,10 @@ export class CommandRunner{
         this.client=client;
     }
     run=(message:Message)=>{
-        let args:CommandArgs=splitToArgs(message.content);
-        message.content=args.content;
-        this.commands[args.commandName]?.run(message, this.client);
+        if(message.type === MessageTypes.TEXT) {
+            let args:CommandArgs=splitToArgs(message.content);
+            message.content=args.content;
+            this.commands[args.commandName]?.run(message, this.client);
+        }
     }
 }
