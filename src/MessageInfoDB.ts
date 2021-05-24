@@ -1,24 +1,28 @@
 import * as mongoose from "mongoose";
 
-const uri: string = "mongodb://127.0.0.1:27017/local";
+const uri: string = "mongodb://127.0.0.1:27017/test";
 
 mongoose.connect(uri, (err: any) => {
-  if (err) {
-    console.log(err.message);
-  } else {
-    console.log("Successfully Connected!");
-  }
+    if (err) {
+        console.log(err.message);
+    } else {
+        console.log("Successfully Connected!");
+    }
 });
 
-export interface IBook extends mongoose.Document {
-  title: string;
-  author: number;
+export interface ShortcutProps{
+    law: string;
 }
 
-export const BookSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  author: { type: String, required: true }
+export interface IMessageInfo extends mongoose.Document {
+    _id: string;
+    props:ShortcutProps;
+}
+
+export const MessageInfoSchema = new mongoose.Schema({
+    props: { type: Object, required: false },
+    _id: { type: String, required: true }
 });
 
-const Book = mongoose.model<IBook>("Book", BookSchema);
-export default Book;
+const MessageInfo = mongoose.model<IMessageInfo>("messageInfo", MessageInfoSchema);
+export default MessageInfo;

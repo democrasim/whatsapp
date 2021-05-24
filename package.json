@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node .",
-    "test": "mocha",
+    "test": "NODE_ENC=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register  \"test/**/*.spec.ts\"",
     "build": "tsc -p .",
-    "dev":"NODE_ENV=dev nodemon -r tsconfig-paths/register src/index.ts"
+    "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/index.ts"
   },
   "repository": {
     "type": "git",

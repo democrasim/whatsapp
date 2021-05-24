@@ -1,0 +1,19 @@
+[
+    {
+        "aliases": [
+            "neutral",
+            "against",
+            "for"
+        ],
+        "command": "vote",
+        "props": {
+            "vote": {
+                "type": "alias"
+            },
+            "law": {
+                "type": "prop",
+                "propName": "law"
+            }
+        }
+    }
+]

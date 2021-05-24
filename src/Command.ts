@@ -4,6 +4,5 @@ export interface Command{
     flags:string[],
     content:string,
     sender:string,
-    group:string,
-    ignoreAdditionalOptions:boolean
+    group:string
 }

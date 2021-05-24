@@ -1,19 +1,17 @@
 import { Command } from './Command';
 import { Message, Client } from '@open-wa/wa-automate';
-const config = require("../config.json");
+const shortcuts = require("../shortcuts.json");
+import MessageInfo, { IMessageInfo } from './MessageInfoDB';
 
 export function parseCommand(message: Message): Command {
     let rows: string[] = message.content.split('\n');
-    let type: string[] = rows.shift().split(/\s+/);
+    let type: string[] = rows[0].split(/\s+/);
     let props: Record<string, string> = {};
     let flags: string[] = [];
     let content: string = "";
     let sender: string = message.author;
     let group: string = message.chatId;
-    let replied:string=message.quotedMsg.content;
-    if (message.quotedMsg.fromMe){
-
-    }
+    
     for (let row in rows) {
         if (row != "" && row[0] == '#') {
             let rowContent: string = row.substring(1);
@@ -40,6 +38,11 @@ export function parseCommand(message: Message): Command {
         content,
         sender,
         group,
-        ignoreAdditionalOptions:true
     };
+}
+
+
+
+function getShortcut(alias:string){
+
 }
