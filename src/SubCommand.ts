@@ -1,4 +1,4 @@
-import { Command } from './Command';
+import { Command } from './CommandExecutor';
 import { splitToArgs, CommandArgs } from './lexer';
 import { Message,Client } from '@open-wa/wa-automate';
 

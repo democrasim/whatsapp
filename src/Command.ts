@@ -1,5 +1,9 @@
-import { Message, Client } from '@open-wa/wa-automate';
-
 export interface Command{
-    run : (command : Message, client:Client) => void;
+    type:string[],
+    props:Record<string,string>,
+    flags:string[],
+    content:string,
+    sender:string,
+    group:string,
+    ignoreAdditionalOptions:boolean
 }

@@ -1,5 +1,5 @@
 import {splitToArgs , CommandArgs} from './lexer';
-import {Command} from './Command';
+import {Command} from './CommandExecutor';
 import { Message, Client, MessageTypes } from '@open-wa/wa-automate';
 
 export class CommandRunner{
