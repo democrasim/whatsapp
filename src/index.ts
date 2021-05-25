@@ -28,7 +28,7 @@ function start(client: Client) {
 
 async function handleMessage(message:Message) {
     let voteExecutor:CommandExecutor=new VoteExecutor();
-    let commands:CommandTree=new CommandTree({"vote":new CommandTree({},voteExecutor.execute)},voteExecutor.execute);
+    let commands:CommandTree=new CommandTree({"vote":new CommandTree({},voteExecutor.run)},voteExecutor.run);
     if (message.content[0]=='#'){
         message.content=message.content.substring(1);
         let command:Command=parseCommand(message);

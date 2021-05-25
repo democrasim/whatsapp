@@ -1,5 +1,6 @@
 import { Command } from './Command';
 import clientModule from './index';
+const config:Record<string,string> = require("../config.json");
 
 export default class CommandTree {
     private subCommands: Record<string, CommandTree>;
@@ -7,11 +8,11 @@ export default class CommandTree {
     run = (command: Command) => {
         let current: CommandTree = this;
         for (let subcommand of command.type) {
-            if (!(subcommand in current.subCommands)) {
+            if (!(config[subcommand] in current.subCommands)) {
                 clientModule.client?.sendText(command.group, subcommand + "is not a command");
                 return;
             }
-            current = current.subCommands[subcommand];
+            current = current.subCommands[config[subcommand]];
         }
         current.execute(command);
     }
