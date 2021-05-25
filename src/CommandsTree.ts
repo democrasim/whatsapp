@@ -6,7 +6,7 @@ export default class CommandTree {
     private execute: (command: Command) => void;
     run = (command: Command) => {
         let current: CommandTree = this;
-        for (let subcommand in command.type) {
+        for (let subcommand of command.type) {
             if (!(subcommand in current.subCommands)) {
                 clientModule.client?.sendText(command.group, subcommand + "is not a command");
                 return;

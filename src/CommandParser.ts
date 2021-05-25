@@ -12,7 +12,7 @@ export function parseCommand(message: Message): Command {
     let sender: string = message.author;
     let group: ChatId = message.chatId;
     
-    for (let row in rows) {
+    for (let row of rows) {
         if (row != "" && row[0] == '#') {
             let rowContent: string = row.substring(1);
             let words: string[] = rowContent.split(/\s+/);

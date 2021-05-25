@@ -1,6 +1,6 @@
 import { Command } from "./Command";
 import clientModule from "./index";
-const config = require("../config.json");
+const config:Record<string,string> = require("../config.json");
 
 
 export default abstract class CommandExecutor {
@@ -18,7 +18,7 @@ export default abstract class CommandExecutor {
     }
     private validate = (command: Command): boolean => {
         let translatedFlags: string[] = [];
-        for (let flag in command.flags) {
+        for (let flag of command.flags) {
             if (flag in config) {
                 translatedFlags.push(config[flag]);
             }
@@ -40,20 +40,20 @@ export default abstract class CommandExecutor {
             }
         }
         command.props = translatedOptions;
-        for (let option in Object.keys(command.props)) {
-            if (!(option in Object.keys(this.optionalOptions)) && !(option in this.requiredOptions)) {
+        for (let option in command.props) {
+            if (!(option in this.optionalOptions) && !(option in this.requiredOptions)) {
                 clientModule.client?.sendText(command.group, "bad option - " + option);
                 return false;
             }
         }
-        for (let flag in command.flags) {
+        for (let flag of command.flags) {
             if (!(flag in this.flags)) {
                 clientModule.client?.sendText(command.group, "bad flag - " + flag);
                 return false;
             }
         }
-        for (let required in this.requiredOptions) {
-            if (!(required in Object.keys(command.props))) {
+        for (let required of this.requiredOptions) {
+            if (!(required in command.props)) {
                 clientModule.client?.sendText(command.group, "missing option - " + required);
                 return false;
             }
