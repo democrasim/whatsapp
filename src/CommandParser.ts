@@ -11,6 +11,7 @@ export function parseCommand(message: Message): Command {
     let content: string = "";
     let sender: string = message.author;
     let group: ChatId = message.chatId;
+    rows.shift();
     
     for (let row of rows) {
         if (row != "" && row[0] == '#') {

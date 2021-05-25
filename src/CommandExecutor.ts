@@ -31,7 +31,6 @@ export default abstract class CommandExecutor {
         let translatedOptions: Record<string, string> = {};
         for (let option in command.props) {
             if (option in config) {
-                translatedFlags.push(config[option]);
                 translatedOptions[config[option]] = command.props[option];
             }
             else {
@@ -47,7 +46,9 @@ export default abstract class CommandExecutor {
             }
         }
         for (let flag of command.flags) {
-            if (!(flag in this.flags)) {
+            console.log(flag);
+            console.log(this.flags);
+            if (this.flags.indexOf(flag)==-1) {
                 clientModule.client?.sendText(command.group, "bad flag - " + flag);
                 return false;
             }
