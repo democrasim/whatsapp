@@ -1,5 +1,5 @@
 import { Command } from './Command';
-import { Message, Client } from '@open-wa/wa-automate';
+import { Message, Client, ChatId } from '@open-wa/wa-automate';
 const shortcuts = require("../shortcuts.json");
 import MessageInfo, { IMessageInfo } from './MessageInfoDB';
 
@@ -10,7 +10,7 @@ export function parseCommand(message: Message): Command {
     let flags: string[] = [];
     let content: string = "";
     let sender: string = message.author;
-    let group: string = message.chatId;
+    let group: ChatId = message.chatId;
     
     for (let row in rows) {
         if (row != "" && row[0] == '#') {
@@ -39,10 +39,4 @@ export function parseCommand(message: Message): Command {
         sender,
         group,
     };
-}
-
-
-
-function getShortcut(alias:string){
-
 }

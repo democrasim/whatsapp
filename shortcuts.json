@@ -11,8 +11,16 @@
                 "type": "alias"
             },
             "law": {
-                "type": "prop",
+                "type": "repliedProp",
                 "propName": "law"
+            },
+            "default":{
+                "type":"static",
+                "value":"sharabi"
+            },
+            "hidden":{
+                "type":"prop",
+                "propName":"h"
             }
         }
     }

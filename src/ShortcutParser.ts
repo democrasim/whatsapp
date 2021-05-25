@@ -3,7 +3,7 @@ import { Message, Client } from '@open-wa/wa-automate';
 const shortcuts: any[] = require("../shortcuts.json");
 import MessageInfo, { IMessageInfo } from './MessageInfoDB';
 
-export async function parseShortcut(message: Message): Promise<Command?> {
+export async function parseShortcut(message: Message): Promise<Command | null> {
 
     let rows: string[] = message.content.split('\n');
     let type: string[] = rows[0].split(/\s+/);
@@ -27,19 +27,19 @@ export async function parseShortcut(message: Message): Promise<Command?> {
     }
     rows.shift();
     let shortcut=findShortcut(alias);
-
+    return null;
 }
 
-(err: any, result: any) => {
-    messageInfo = result;
-    Object.keys(result).forEach(e => {
-        props[e] = result[e];
-    })
-    if (result != null) {
+// (err: any, result: any) => {
+//     messageInfo = result;
+//     Object.keys(result).forEach(e => {
+//         props[e] = result[e];
+//     })
+//     if (result != null) {
         
         
-    }
-}
+//     }
+// }
 
 function findShortcut(word: string) {
     for (let i = 0; i < shortcuts.length; i++) {
