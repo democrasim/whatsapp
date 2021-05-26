@@ -5,7 +5,9 @@ import CommandExecutor from './CommandExecutor';
 import { parseCommand } from './CommandParser';
 import CommandTree from './CommandsTree';
 import VoteExecutor from './VoteExecutor';
+import * as dotenv from 'dotenv';
 const wa = require('@open-wa/wa-automate');
+dotenv.config({ path: __dirname + '/.env' });
 
 interface ClientModule {
     client: Client | undefined;
