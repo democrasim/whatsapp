@@ -1,12 +1,12 @@
 import { create, Client, Message } from '@open-wa/wa-automate';
 import PassFactLawExecutor from './PassLawExecutor';
 import { Command } from './Command';
+import listenToIncomingMessages from './messagingAPI';
 import CommandExecutor from './CommandExecutor';
 import { parseCommand } from './CommandParser';
 import CommandTree from './CommandsTree';
 import VoteExecutor from './VoteExecutor';
 import * as dotenv from 'dotenv';
-const wa = require('@open-wa/wa-automate');
 dotenv.config({ path: __dirname + '/.env' });
 
 interface ClientModule {
@@ -16,12 +16,16 @@ interface ClientModule {
 const clientModule: ClientModule = { client: undefined };
 
 
-wa.create().then((client: Client) => {
+create({
+    useChrome: true,
+    headless: false
+}).then((client: Client) => {
     start(client);
     clientModule.client = client;
 });
 
 function start(client: Client) {
+    listenToIncomingMessages(client);
     client.onAnyMessage(async (message: Message) => {
         if (message.fromMe) {
             await handleMessage(message);
