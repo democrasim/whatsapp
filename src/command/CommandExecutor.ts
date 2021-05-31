@@ -1,6 +1,6 @@
-import { Command } from "./Command";
-import clientModule from "./index";
-const config:Record<string,string> = require("../config.json");
+import { Command } from "@command/Command";
+import clientModule from "@/index";
+const config:Record<string,string> = require("@/../config.json");
 
 
 export default abstract class CommandExecutor {

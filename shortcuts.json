@@ -6,7 +6,7 @@
             "for"
         ],
         "command": "vote",
-        "aliasProp": [
+        "aliasProps": [
             "vote"
         ],
         "repliedProps": [
@@ -17,7 +17,7 @@
         ],
         "shortProps": [
             {
-                "shortName": "h",
+                "shortName": "default",
                 "outputProp": "hidden"
             }
         ],
@@ -26,6 +26,9 @@
                 "value": "sharabi",
                 "outputProp": "default"
             }
+        ],
+        "defaultProps": [
+            ""
         ]
     }
 ]

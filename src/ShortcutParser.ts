@@ -1,7 +1,7 @@
-import { Command } from './Command';
+import { Command } from '@command/Command';
 import { Message, Client } from '@open-wa/wa-automate';
-const shortcuts: any[] = require("../shortcuts.json");
-import MessageInfo, { IMessageInfo } from './MessageInfoDB';
+const shortcuts: any[] = require("@/../shortcuts.json");
+import MessageInfo, { IMessageInfo } from '@/MessageInfoDB';
 
 export async function parseShortcut(message: Message): Promise<Command | null> {
 

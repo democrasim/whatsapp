@@ -1,9 +1,10 @@
-import { Command } from "./Command";
-import CommandExecutor from "./CommandExecutor";
-import clientModule from './index';
-const config:Record<string,string> = require("../config.json");
+import { Command } from "@command/Command";
+import CommandExecutor from "@command/CommandExecutor";
+import clientModule from '@/index';
+const config:Record<string,string> = require("../../../config.json");
 
 export default class PassFactLawExecutor extends CommandExecutor {
+    
     execute(command: Command): void {
         let s:string = "law content: "+command.content;
         if (command.flags.includes("anonymous")){

@@ -1,7 +1,7 @@
-import { Command } from './Command';
+import { Command } from '@command/Command';
 import { Message, Client, ChatId } from '@open-wa/wa-automate';
-const shortcuts = require("../shortcuts.json");
-import MessageInfo, { IMessageInfo } from './MessageInfoDB';
+const shortcuts = require("@/../shortcuts.json");
+import MessageInfo, { IMessageInfo } from '@/MessageInfoDB';
 
 export function parseCommand(message: Message): Command {
     let rows: string[] = message.content.split('\n');

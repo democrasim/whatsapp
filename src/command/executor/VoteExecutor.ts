@@ -1,7 +1,7 @@
-import { Command } from "./Command";
-import CommandExecutor from "./CommandExecutor";
-import clientModule from './index';
-const config:Record<string,string> = require("../config.json");
+import { Command } from "../Command";
+import CommandExecutor from "../CommandExecutor";
+import clientModule from '../../index';
+const config:Record<string,string> = require("../../../config.json");
 
 export default class VoteExecutor extends CommandExecutor {
     execute(command: Command): void {

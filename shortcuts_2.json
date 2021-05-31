@@ -1,0 +1,20 @@
+{
+    "name": "vote-shortcut",
+    "aliases": [
+        "for",
+        "against",
+        "abstain"
+    ],
+    "props": {
+        "type": {
+            "type": "prop",
+            "name": "$alias"
+        },
+        "$default": "$default",
+        "h": "hidden",
+        "law": "#law"
+    }
+
+}
+
+
