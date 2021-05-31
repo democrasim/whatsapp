@@ -6,22 +6,26 @@
             "for"
         ],
         "command": "vote",
-        "props": {
-            "vote": {
-                "type": "alias"
-            },
-            "law": {
-                "type": "repliedProp",
-                "propName": "law"
-            },
-            "default":{
-                "type":"static",
-                "value":"sharabi"
-            },
-            "hidden":{
-                "type":"prop",
-                "propName":"h"
+        "aliasProp": [
+            "vote"
+        ],
+        "repliedProps": [
+            {
+                "inputProp": "law",
+                "outputProp": "law"
             }
-        }
+        ],
+        "shortProps": [
+            {
+                "shortName": "h",
+                "outputProp": "hidden"
+            }
+        ],
+        "staticProps": [
+            {
+                "value": "sharabi",
+                "outputProp": "default"
+            }
+        ]
     }
 ]
