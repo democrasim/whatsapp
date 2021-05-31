@@ -1,4 +1,4 @@
-import { create, Client, Message } from '@open-wa/wa-automate';
+import { create, Client, Message, MessageTypes } from '@open-wa/wa-automate';
 import PassFactLawExecutor from './PassLawExecutor';
 import { Command } from './Command';
 import listenToIncomingMessages from './messagingAPI';
@@ -34,6 +34,7 @@ function start(client: Client) {
 }
 
 async function handleMessage(message: Message) {
+    if(message.type !== MessageTypes.TEXT) return;
     let voteExecutor: CommandExecutor = new VoteExecutor();
     let factLawExecutor: CommandExecutor = new PassFactLawExecutor();
     let commands: CommandTree = new CommandTree({
