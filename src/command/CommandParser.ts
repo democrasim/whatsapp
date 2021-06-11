@@ -9,7 +9,7 @@ export function parseCommand(message: Message): Command {
     let props: Record<string, string> = {};
     let flags: string[] = [];
     let content: string = "";
-    let sender: string = message.author;
+    let sender: string = message.author || message.sender.id;
     let group: ChatId = message.chatId;
     rows.shift();
     

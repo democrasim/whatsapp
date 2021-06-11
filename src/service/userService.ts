@@ -1,4 +1,5 @@
-import type { Member } from "@/types";
+import type { Law, Member } from "@/types";
+import { encode } from 'querystring';
 import { apiCall } from "@service/apiCall";
 
 const memberApiEndpoint = 'member';
@@ -13,6 +14,10 @@ export const allMembers = async () => {
 }
 
 export const allMembersRegistered = async () => {
-    return await apiCall<Member[]>('GET', `${memberApiEndpoint}/all?registered=true`,{}, true, 'Could not fetch registered members');
+    return await apiCall<Member[]>('GET', `${memberApiEndpoint}/all?${encode({ registered: true })}`,{}, true, 'Could not fetch registered members');
 
+}
+
+export const register = async (name: string, phone: string, reason: string) => {
+    return await apiCall<Law>('POST', `${memberApiEndpoint}/request_register?${encode({ name, phone, reason })}`, {}, true, 'Could not register');
 }

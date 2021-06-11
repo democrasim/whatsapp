@@ -9,6 +9,10 @@ export default async function listenToIncomingMessages(client:Client){
     app.use(express.json());
     app.post('/send_message', async (req,res)=>{
         let { chatId, message } = req.body;
+
+        console.log(`Requesting ${chatId} with content: ${message}`);
+        
+
         let sent = await client.sendText(chatId as ChatId, message);
         if(sent) {
             res.sendStatus(200);

@@ -17,7 +17,7 @@ export async function apiCall<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PA
 
     const response = await fetch(`${apiEndpoint}/${path}`, { 
         method,
-        body: !isEmpty(payload) ? JSON.stringify(payload): undefined,
+        ...(!isEmpty(payload)) && { body: JSON.stringify(payload) },
         headers: {
             'x-api-key': process.env.API_KEY!,
             'Content-Type': 'application/json'

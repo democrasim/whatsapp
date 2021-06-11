@@ -8,6 +8,7 @@ import CommandTree from '@command/CommandsTree';
 import VoteExecutor from '@executor/VoteExecutor';
 import * as dotenv from 'dotenv';
 import LawListExecutor from '@executor/LawsListExecutor';
+import RegisterExecutor from './command/executor/RegisterExecutor';
 dotenv.config({ path: __dirname + '/.env' });
 
 interface ClientModule {
@@ -34,9 +35,7 @@ create({
 function start(client: Client) {
     listenToIncomingMessages(client);
     client.onAnyMessage(async (message: Message) => {
-        if (message.fromMe) {
-            await handleMessage(message);
-        }
+        await handleMessage(message);
     });
 }
 
@@ -46,7 +45,7 @@ async function handleMessage(message: Message) {
     let factLawExecutor = new PassFactLawExecutor();
     let lawListExecutor = new LawListExecutor();
     let commands: CommandTree = new CommandTree({
-
+        "register": new CommandTree({}, new RegisterExecutor().run),
         "laws": new CommandTree({}, lawListExecutor.run),
         "vote": new CommandTree({}, voteExecutor.run),
         "law": new CommandTree(
@@ -56,11 +55,16 @@ async function handleMessage(message: Message) {
             },
             (command: Command) => { })
     }, (command: Command) => { });
+
     if (message.content[0] == '#') {
         message.content = message.content.substring(1);
         let command: Command = parseCommand(message);
         console.log(command);
         commands.run(command);
+    }
+
+    if(message.content === "ping") {
+        clientModule.client?.reply(message.chatId, 'Pong!', message.id);
     }
 
 }

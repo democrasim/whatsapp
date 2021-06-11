@@ -14,7 +14,11 @@ export default class CommandTree {
             }
             current = current.subCommands[config[subcommand]];
         }
-        current.execute(command);
+        try {
+            current.execute(command);
+        } catch(e) {
+            clientModule.client?.sendText(command.group ,`⚠️ ${(e as Error)}`);
+        }
     }
 
     constructor(subCommands: Record<string, CommandTree>, execute: (command: Command) => void) {
