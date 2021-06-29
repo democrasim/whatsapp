@@ -1,4 +1,4 @@
-import type { Law, Status, VoteType } from "@/types";
+import type { Law, LawPropostion, Status, VoteType } from "@/types";
 import { apiCall } from "@service/apiCall";
 
 const lawsApiEndpoint = 'laws';
@@ -26,8 +26,12 @@ export const lawsByStatus = async (status: Status, page?: number, limit?: number
     if (!limit && page) limit = 50;
 
     return await apiCall<Law[]>('GET',
-     `${lawsApiEndpoint}/with_status/${status}/${(page && limit) ? `?page=${page}&limit=${limit}` : ''}`,
-      {},
-       true, 'Could not retreive laws');
+        `${lawsApiEndpoint}/with_status/${status}/${(page && limit) ? `?page=${page}&limit=${limit}` : ''}`,
+        {},
+        true, 'Could not retreive laws');
 
+}
+
+export const propose = async (law: LawPropostion) => {
+    return await apiCall<Law>('POST', `${lawsApiEndpoint}/propose`, law, true, 'Could not propose law.');
 }

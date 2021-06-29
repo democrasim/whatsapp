@@ -14,7 +14,14 @@ export const fetchMemberById = async (id: string) => {
     );
 };
 
+export const fetchMemberByWhatsAppId = async (id: string) => {
+    return await fetchMemberByPhone(id.replace('@c.us', ''));
+}
+
 export const fetchMemberByPhone = async (phone: string) => {
+
+    console.log(`fetching member with phone ${phone}`)
+
     return await apiCall<Member>(
         "GET",
         `${memberApiEndpoint}/by_phone/${phone}`,

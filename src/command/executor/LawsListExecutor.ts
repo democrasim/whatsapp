@@ -33,9 +33,9 @@ export default class LawListExecutor extends CommandExecutor {
         let laws = await lawsByStatus(status, page, limit);
 
         if (!laws) return;
-
+        
         let text = `${format(status)} laws`;
-
+        
         laws.forEach((law) => {
             text += lawToTextSimple(law) + "\n\n";
         });

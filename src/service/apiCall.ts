@@ -32,8 +32,8 @@ export async function apiCall<T>(
     if (!response.ok) {
         throw new Error(errorMessage);
     } else {
-        const text = response.text();
+        const text = await response.text();
         if (isEmpty(text)) return undefined;
-        return parseWithDate(await text) as T;
+        return parseWithDate(text) as T;
     }
 }

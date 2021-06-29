@@ -9,6 +9,7 @@ import VoteExecutor from "@executor/VoteExecutor";
 import * as dotenv from "dotenv";
 import LawListExecutor from "@executor/LawsListExecutor";
 import RegisterExecutor from "./command/executor/RegisterExecutor";
+import { initFlows } from "./flow";
 dotenv.config({ path: __dirname + "/.env" });
 
 interface ClientModule {
@@ -28,8 +29,8 @@ create({
   eventMode: true,
   headless: false,
 }).then((client: Client) => {
-  start(client);
   clientModule.client = client;
+  start(client);
 });
 
 function start(client: Client) {
@@ -37,6 +38,7 @@ function start(client: Client) {
   client.onAnyMessage(async (message: Message) => {
     await handleMessage(message);
   });
+  initFlows();
 }
 
 async function handleMessage(message: Message) {
@@ -53,10 +55,10 @@ async function handleMessage(message: Message) {
         {
           fact: new CommandTree({}, factLawExecutor.run),
         },
-        (command: Command) => {}
+        (command: Command) => { }
       ),
     },
-    (command: Command) => {}
+    (command: Command) => { }
   );
 
   if (message.content[0] == "#") {

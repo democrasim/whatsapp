@@ -26,8 +26,7 @@ export default class RegisterExecutor extends CommandExecutor {
         if (result)
             clientModule.client?.sendText(
                 command.group,
-                `A law for your registration as been successfuly sent with id ${
-                    result!.id
+                `A law for your registration as been successfuly sent with id ${result!.id
                 }`
             );
     }
