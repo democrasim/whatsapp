@@ -9,7 +9,7 @@ const flow: Flow = async (error, send, ask, data) => {
 
         await send(`${text} נשמע כמו שם של חנונים`);
     } else {
-        await send('אשפוז');
+        await send('אשפוז', { 'message': 'secret message' });
     }
 }
 

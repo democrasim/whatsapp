@@ -13,6 +13,7 @@ export interface Content {
   reason?: string;
   member?: Member;
   date?: Date;
+  newPresident?: Member;
   location?: {
     x: number;
     y: number;
