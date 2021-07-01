@@ -1,5 +1,5 @@
 import clientModule from "@/index";
-import { MessageId } from "@open-wa/wa-automate";
+import { ChatId, MessageId } from "@open-wa/wa-automate";
 
 export async function writePayload(messageId: MessageId, payload: any) {
 
@@ -12,6 +12,28 @@ export async function writePayload(messageId: MessageId, payload: any) {
         // @ts-ignore
         window.Store.Msg.get(messageId).description = JSON.stringify(payload);
     }, messageId, payload);
+}
+
+export async function sendPayloaded(content: string, payload: any, chatId: ChatId) {
+
+    const { client } = clientModule;
+    if (!client) return;
+    // @ts-ignore
+    const page: Page = client._page;
+
+    // @ts-ignore
+    client.pup(
+        ({ payload, chatId, content }: { payload: any, chatId: ChatId, content: string }) => {
+            // @ts-ignore
+            const chatSend = WAPI.getChat(chatId);
+            // @ts-ignore
+            chatSend.sendMessage(content, { linkPreview: { description: JSON.stringify(payload) } })
+        }, {
+        payload,
+        chatId,
+        content
+    }
+    );
 }
 
 export async function readPayload(messageId: MessageId) {
@@ -28,5 +50,5 @@ export async function readPayload(messageId: MessageId) {
         return window.Store.Msg.get(messageId).description;
     }, messageId)
 
-    return payload;
+    return JSON.parse(payload);
 }

@@ -5,7 +5,7 @@ import clientModule from "..";
 import fs from 'fs';
 import path from 'path';
 import { Page } from "puppeteer";
-import { writePayload } from "./payload";
+import { sendPayloaded, writePayload } from "./payload";
 
 const selfChat = '17622130901@c.us';
 
@@ -16,6 +16,7 @@ export interface Response {
 }
 
 export interface FlowOptions {
+    aliasWithDollar?: boolean,
     identifier: string;
     privateOnly: boolean;
     memberOnly: boolean;
@@ -53,7 +54,7 @@ const flowStore: FlowStore = {
 
 export type AskCall = (content: string, check?: (message: Message) => boolean, error?: string) => Promise<Response>
 
-export type Flow = (error: (content: string) => Promise<void>, send: (content: string, payload?: any) => Promise<MessageId>, ask: AskCall, data: FlowData, args: string[]) => void;
+export type Flow = (error: (content: string) => Promise<void>, send: (content: string, privately?: boolean, payload?: any) => Promise<MessageId>, ask: AskCall, data: FlowData, args: string[]) => void;
 
 export function getFlows() {
     return flowStore.flows;
@@ -62,19 +63,7 @@ export function getFlows() {
 export async function sendResponse(client: Client, messageId: MessageId, chatId: ChatId, content: string, payload?: {}): Promise<MessageId> {
 
     if (payload) {
-        // @ts-ignore
-        client.pup(
-            ({ payload, chatId, content }: { payload: any, chatId: ChatId, content: string }) => {
-                // @ts-ignore
-                const chatSend = WAPI.getChat(chatId);
-                // @ts-ignore
-                chatSend.sendMessage(content, { linkPreview: { description: JSON.stringify(payload) } })
-            }, {
-            payload,
-            chatId,
-            content
-        }
-        )
+        sendPayloaded(content, payload, chatId);
         return messageId;
 
     }
@@ -128,7 +117,7 @@ export async function sendError(client: Client, message: Message, error: string)
 
 export const registerFlow = (options: FlowOptions, flow: Flow) => {
 
-    flowStore.flows.push({ flow, options });
+    flowStore.flows.push({ flow, options: Object.assign({ aliasWithDollar: true, memberOnly: false, privateOnly: false, aliases: [], identifier: '' } as FlowOptions, options) });
 }
 
 export function initFlows() {
@@ -159,7 +148,7 @@ async function recieveFlow(message: Message, client: Client) {
     const found = flowStore.flows.find(flow => message.type === MessageTypes.TEXT
         && (`$${flow.options.identifier}` === identifier
             || (flow.options.aliases
-                && flow.options.aliases.forEach(alias => `$${alias}` === identifier))))
+                && flow.options.aliases.forEach(alias => `${flow.options.aliasWithDollar ? '$' : ''}${alias}` === identifier))))
     if (!found) return;
     // this means we found the flow, we can now error.
     const { options, flow } = found;
@@ -181,7 +170,7 @@ async function recieveFlow(message: Message, client: Client) {
 
     flow(
         async (content) => await sendError(client, message, content),
-        async (content, payload) => lastMessageId = await sendResponse(client, lastMessageId, message.chatId, content, payload),
+        async (content, privately = false, payload) => lastMessageId = await sendResponse(client, lastMessageId, privately ? message.sender.id : message.chatId, content, payload),
         async (content, check, error) => {
             const response = (await awaitResponse(client, message.chatId, message.sender.id, lastMessageId, content, check, error));
             lastMessageId = response.response.id;

@@ -1,7 +1,10 @@
+import { AccountNumber } from "@open-wa/wa-automate";
+
+
 export interface Member {
   id: string;
   name: string;
-  phone: string;
+  phone: AccountNumber;
   president: boolean;
   registered: boolean;
   joined: Date;

@@ -21,6 +21,10 @@ export const vote = async (member: string, law: string, type: VoteType, reason: 
     }, true, 'Could not vote');
 }
 
+export const lawByNumber = async (law: number) => {
+    return await apiCall<Law | undefined>('GET', `${lawsApiEndpoint}/get_number?number=${law}`, {}, true, 'could not receive law');
+}
+
 export const lawsByStatus = async (status: Status, page?: number, limit?: number) => {
     if (!page && limit) page = 1;
     if (!limit && page) limit = 50;
