@@ -66,9 +66,11 @@ export function voteString(votes: Vote[]) {
         output += `  ${voteStrings[vote.vote]} ${vote.voter.name}
 `;
 
-        if (votes.length === 0) return 'אין הצבעות';
-        return output;
     });
+
+
+    if (votes.length === 0) return 'אין הצבעות';
+    return output;
 }
 
 export function resultString(status: Status) {
