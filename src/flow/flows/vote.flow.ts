@@ -46,7 +46,7 @@ registerFlow(
     identifier: "הצבעה",
     description: "פקודה בשביל להצביע",
     usage: "$בעד/נגד/נמנע",
-    name: "הרשמה",
+    name: "הצבעה",
   },
   flow
 );
