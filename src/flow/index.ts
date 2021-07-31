@@ -120,7 +120,7 @@ export async function awaitResponse(
           id: "" + i,
         };
       }),
-      title,
+      title!,
       footer
     )) as MessageId;
   } else {
