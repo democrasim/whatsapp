@@ -217,7 +217,7 @@ async function recieveFlow(message: Message, client: Client) {
       message.type === MessageTypes.TEXT &&
       (`$${flow.options.identifier}` === identifier ||
         (flow.options.aliases &&
-          flow.options.aliases.forEach(
+          flow.options.aliases.some(
             (alias) =>
               `${flow.options.aliasWithDollar ? "$" : ""}${alias}` ===
               identifier
