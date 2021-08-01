@@ -1,5 +1,6 @@
 import { propose } from "@/service/lawService";
-import { Content, ContentType, Law, LawPropostion } from "@/types";
+import { fetchAllMembers, fetchMemberByName } from "@/service/userService";
+import { Content, ContentType, Law, LawPropostion, Member } from "@/types";
 import { MessageId } from "@open-wa/wa-automate";
 import { text } from "express";
 import { Flow, RegisteredFlow, registerFlow } from "..";
@@ -12,6 +13,7 @@ const flow: Flow = async (error, send, ask, data) => {
     עובדה: "FACT",
     איסור: "BAN",
     חובה: "REQUIREMENT",
+    גירוש: "REMOVE_MEMBER",
   };
 
   const typeList = Object.keys(types);
@@ -52,6 +54,24 @@ ${typesString}`,
       let { text: description } = await ask(`בבקשה תן תיאור לסעיף הזה`);
 
       content.description = description;
+    }
+    if ("REMOVE_MEMBER" === types[type]) {
+      let members: Member[] = (await fetchAllMembers())!;
+      let membersText: string = "את מי תרצה להעיף";
+      membersText += "?\n";
+
+      for (let i of members) {
+        membersText += i.name + "\n";
+      }
+      let { text: removedMemberName } = await ask(membersText);
+      let removedMember = members.find(
+        (member) => member.name === removedMemberName
+      );
+      if (!removedMember) {
+        error("משתמש לא קיים");
+        return;
+      }
+      content.member = removedMember;
     }
 
     contents.push(content);

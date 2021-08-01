@@ -100,7 +100,8 @@ export function contentToString(content: Content, index: number) {
         'CHANGE_PRESIDENT': 'שינוי נשיא',
         'EVENT': 'אירוע',
         'FACT': 'עובדה',
-        'REQUIREMENT': 'חובה'
+        'REQUIREMENT': 'חובה',
+        'REMOVE_MEMBER':'גירוש'
     }
 
     let output = `§${index} ${typeNames[content.type]}

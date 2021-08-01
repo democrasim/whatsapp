@@ -1,4 +1,5 @@
 import { AccountNumber } from "@open-wa/wa-automate";
+import { type } from "os";
 
 
 export interface Member {
@@ -39,7 +40,7 @@ export type RequirementContent = DescribedContent & { type: 'REQUIREMENT' };
 
 export type BanContent = DescribedContent & { type: 'BAN' };
 
-
+export type RemoveContent=DescribedContent & {type:'REMOVE_MEMBER'};
 
 export interface Vote {
   id: string;
@@ -48,7 +49,7 @@ export interface Vote {
   reason: string;
 }
 
-export type ContentType = "ADD_MEMBER" | "FACT" | "REQUIREMENT" | "BAN" | "EVENT" | "CHANGE_PRESIDENT";
+export type ContentType = "ADD_MEMBER" | "FACT" | "REQUIREMENT" | "BAN" | "EVENT" | "CHANGE_PRESIDENT"|"REMOVE_MEMBER";
 export type VoteType = "FOR" | "AGAINST" | "ABSTAIN";
 export type Status = "PASSED" | "UNDER_VOTE" | "FAILED" | "VETOED" | "CANCELED";
 

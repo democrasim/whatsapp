@@ -34,13 +34,13 @@ const flow: Flow = async (error, send, ask, data, args) => {
     return;
   }
 
-  send(lawDisplay(law), true, { lawId: law.id });
+  send(lawDisplay(law), false, { lawId: law.id });
 };
 
 registerFlow(
   {
     memberOnly: true,
-    privateOnly: true,
+    privateOnly: false,
     aliases: ["מצב"],
     identifier: "חוק",
     description: "פקודה בשביל להציג מידע על חוק",
