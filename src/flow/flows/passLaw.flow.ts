@@ -1,6 +1,13 @@
 import { propose } from "@/service/lawService";
 import { fetchAllMembers, fetchMemberByName } from "@/service/userService";
-import { Content, ContentType, Law, LawPropostion, Member } from "@/types";
+import {
+  Content,
+  ContentType,
+  Law,
+  LawPropostion,
+  Member,
+  PunishmentType,
+} from "@/types";
 import { MessageId } from "@open-wa/wa-automate";
 import { text } from "express";
 import { Flow, RegisteredFlow, registerFlow } from "..";
@@ -16,10 +23,19 @@ const flow: Flow = async (error, send, ask, data) => {
     גירוש: "REMOVE_MEMBER",
   };
 
+  const punishments: Record<string, PunishmentType> = {
+    גירוש: "BAN",
+  };
+
   const typeList = Object.keys(types);
+  const punishmentsTypes = Object.keys(punishments);
 
   const typesString = typeList.reduce(
     (prev, current) => prev + "\n" + current,
+    ""
+  );
+  const punishmentsString = punishmentsTypes.reduce(
+    (str, current) => str + "\n" + current,
     ""
   );
 
@@ -72,6 +88,18 @@ ${typesString}`,
         return;
       }
       content.member = removedMember;
+    }
+    if (["BAN", "REQUIREMENT"].includes(types[type])) {
+      const { text: punishment} = await ask(
+        `איזה סוג של סעיף תרצה להוסיף?
+  האופציות:
+  ${punishmentsString}`,
+        (message) => punishmentsTypes.includes(message.content),
+        `זה לא סוג מותר, אנא נסה שוב`
+      );
+      content.punishment={
+        type: punishments[punishment],
+      }
     }
 
     contents.push(content);

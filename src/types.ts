@@ -10,6 +10,10 @@ export interface Member {
   registered: boolean;
   joined: Date;
 }
+export interface Punishment{
+  type:PunishmentType
+}
+
 
 export interface Content {
   type: ContentType;
@@ -22,6 +26,7 @@ export interface Content {
     x: number;
     y: number;
   };
+  punishment?:Punishment
 }
 
 export type DescribedContent = Content & {
@@ -52,6 +57,7 @@ export interface Vote {
 export type ContentType = "ADD_MEMBER" | "FACT" | "REQUIREMENT" | "BAN" | "EVENT" | "CHANGE_PRESIDENT"|"REMOVE_MEMBER";
 export type VoteType = "FOR" | "AGAINST" | "ABSTAIN";
 export type Status = "PASSED" | "UNDER_VOTE" | "FAILED" | "VETOED" | "CANCELED";
+export type PunishmentType= "BAN";
 
 export interface Law {
   id: string;
