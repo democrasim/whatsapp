@@ -30,16 +30,16 @@ export const fetchMemberByPhone = async (phone: string) => {
   );
 };
 
-export const fetchAllMembers=async ()=>{
+export const fetchAllMembers = async () => {
   console.log("fetching all members");
   return await apiCall<Member[]>(
     "GET",
-    `${memberApiEndpoint}/all?registered=true`,
+    `${memberApiEndpoint}/all`,
     {},
     true,
     "could not fetch members"
   );
-}
+};
 
 export const fetchMemberByName = async (name: string) => {
   console.log(`fetching member with name ${name}`);
