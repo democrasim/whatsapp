@@ -16,3 +16,7 @@ ${member.name} ${regsiteredEmoji(member.registered)}`;
 
   return response;
 }
+
+export function displayMembersNames(members:Member[]){
+  return members.map((members)=>members.name).join("\n");
+}
