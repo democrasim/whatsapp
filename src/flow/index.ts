@@ -200,7 +200,9 @@ export function initFlows() {
       console.log("Loaded " + file);
     });
 
-  client.onAnyMessage((message: Message) => recieveFlow(message, client));
+  client.onAnyMessage((message: Message) => {recieveFlow(message, client);
+    console.log(message);
+  });
 }
 
 function isFlow(flow: RegisteredFlow, message: Message) {

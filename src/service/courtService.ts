@@ -1,3 +1,4 @@
+import { Member } from "@/types";
 import { apiCall } from "@service/apiCall";
 
 const courtApiEndpoint = "court";
@@ -15,11 +16,21 @@ export const prosecute = async (
     {
       law: lawId,
       section,
-      prosecutor: prosecutedId,
+      prosecutor: prosecutorId,
       prosecuted: prosecutedId,
       info: reason,
     },
     true,
     "unable to prosecute"
+  );
+};
+
+export const getJudge = async () => {
+  return await apiCall<Member>(
+    "GET",
+    `${courtApiEndpoint}/judge`,
+    {},
+    true,
+    "unable to fetch judge"
   );
 };

@@ -19,7 +19,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
   }
   let content: Content;
   let potentialContents = law.content.filter((content) => {
-    return content.punishment!;
+    return content.punishment!==undefined;
   });
   if (potentialContents.length == 0) {
     error("בחוק שבחרת אין שום עונש");

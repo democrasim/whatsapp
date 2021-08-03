@@ -13,6 +13,16 @@ export interface Member {
 export interface Punishment{
   type:PunishmentType
 }
+export interface Prosecution{
+  law:Law,
+  section:number,
+  content:Content,
+  prosecutor:Member,
+  prosecuted:Member,
+  info:string,
+  status:ProsecutionStatus,
+  isAppealed:boolean
+}
 
 
 export interface Content {
@@ -58,6 +68,7 @@ export type ContentType = "ADD_MEMBER" | "FACT" | "REQUIREMENT" | "BAN" | "EVENT
 export type VoteType = "FOR" | "AGAINST" | "ABSTAIN";
 export type Status = "PASSED" | "UNDER_VOTE" | "FAILED" | "VETOED" | "CANCELED";
 export type PunishmentType= "BAN";
+export type ProsecutionStatus="IN_PROCESS"|"ACCEPTED"|"DENIED";
 
 export interface Law {
   id: string;
