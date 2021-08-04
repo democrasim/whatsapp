@@ -1,4 +1,5 @@
 import { Client, ChatId, ContactId } from "@open-wa/wa-automate";
+import fetch from "node-fetch";
 import express from "express";
 import clientModule from ".";
 import { sendPayloaded } from "./flow/payload";
@@ -100,20 +101,40 @@ ${code}
   app.post("/new_prosecution", async (req, res) => {
     const prosecution: Prosecution = req.body;
     const judge = await getJudge();
-    const group = await client.createGroup(prosecutionGroupName(prosecution), [
-      `${prosecution.prosecutor.phone}@c.us`,
-      `${prosecution.prosecuted.phone}@c.us`,
-    ]);
-    
-    //await client.addParticipant(group.gid, `${judge!.phone}@c.us`);
-    let y = 9;
-    await client.sendText(
-      `${group.gid.user}@${group.gid.server}`,
-      "prosecutionExplanation(prosecution, judge!)"
+    const group = await client.createGroup(
+      "prosecutionGroupName(prosecution)",
+      [
+        `972544805278@c.us`,
+        //`${prosecution.prosecuted.phone}@c.us`,
+        //`${judge!.phone}@c.us`
+      ]
     );
-    let t=89;
+    const sleep = (milliseconds: number) => {
+      return new Promise((resolve) => setTimeout(resolve, milliseconds));
+    };
+    await sleep(5000);
+    let y = 9;
+    let d: any = group.gid;
+    //group.gid='972586649222-1628079917@g.us';
+    // await client.sendText(
+    //   group.gid,
+    //   "prosecutionExplanation(prosecution, judge!)"
+    // );
+    let t = 89;
+    await fetch("http://localhost:8081/prosecution_decided", {
+      method: "POST",
+      body: JSON.stringify({
+        a: d._serialized,
+        b: "prosecutionExplanation(prosecution, judge!)",
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   });
-  app.post("/prosecution_decided", async (req, res) => {});
+  app.post("/prosecution_decided", async (req, res) => {
+    await client.sendText(req.body.a, req.body.b);
+  });
   app.post("/prosecution_appealed", async (req, res) => {});
   app.post("/prosecution_appeal_decided", async (req, res) => {});
 
