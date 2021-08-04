@@ -4,7 +4,7 @@ export function prosecutionExplanation(prosecution:Prosecution, judge:Member){
     return `ברוכים הבאים לבית המשפט
     ${prosecution.prosecutor.name} הגיש תביעה נגד ${prosecution.prosecuted.name}
     על הפרת חוק מספר ${prosecution.law.number} סעיף ${prosecution.section}
-    שהוא ${prosecution.content.description}
+    שהוא ${prosecution.punishmentContent.description}
     ראיות התובע: ${prosecution.info}
     כעת השופט ${judge.name} ידון איתכם`;
 }

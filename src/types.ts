@@ -16,7 +16,7 @@ export interface Punishment{
 export interface Prosecution{
   law:Law,
   section:number,
-  content:Content,
+  punishmentContent:Content,
   prosecutor:Member,
   prosecuted:Member,
   info:string,
