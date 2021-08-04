@@ -111,6 +111,7 @@ ${code}
     );
     let d: any = group.gid;
     client.sendText(d._serialized,prosecutionExplanation(prosecution,judge!))
+    res.send(d._serialized);
   });
   app.post("/prosecution_decided", async (req, res) => {
   });
