@@ -14,6 +14,7 @@ export interface Punishment{
   type:PunishmentType
 }
 export interface Prosecution{
+  id:string,
   law:Law,
   section:number,
   punishmentContent:Content,
@@ -21,7 +22,8 @@ export interface Prosecution{
   prosecuted:Member,
   info:string,
   status:ProsecutionStatus,
-  isAppealed:boolean
+  isAppealed:boolean,
+  groupId:string
 }
 
 

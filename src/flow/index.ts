@@ -17,6 +17,7 @@ import fs from "fs";
 import path from "path";
 import { Page } from "puppeteer";
 import { sendPayloaded, writePayload } from "./payload";
+import { GroupChat } from "whatsapp-web.js";
 
 const selfChat = "17622130901@c.us";
 
@@ -52,6 +53,7 @@ interface FlowData {
   quoted?: Message;
   contact: Contact;
   messageId: MessageId;
+  groupId:ChatId
 }
 
 const flowStore: FlowStore = {
@@ -280,6 +282,7 @@ async function recieveFlow(message: Message, client: Client) {
       contact: message.sender,
       messageId: message.id,
       member,
+      groupId:message.chatId
     },
     args
   );

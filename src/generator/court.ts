@@ -12,3 +12,7 @@ export function prosecutionExplanation(prosecution:Prosecution, judge:Member){
 export function prosecutionGroupName(prosecution:Prosecution){
     return `תביעה- חוק ${prosecution.law.number}.${prosecution.section}`
 }
+
+export function prosecutionDecided(prosecution:Prosecution){
+    return `${prosecution.status==="ACCEPTED"?"התביעה התקבלה":"התביעה נדחתה"}`;
+}

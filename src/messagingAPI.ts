@@ -4,6 +4,7 @@ import express from "express";
 import clientModule from ".";
 import { sendPayloaded } from "./flow/payload";
 import {
+  prosecutionDecided,
   prosecutionExplanation,
   prosecutionGroupName,
 } from "./generator/court";
@@ -114,6 +115,8 @@ ${code}
     res.send(d._serialized);
   });
   app.post("/prosecution_decided", async (req, res) => {
+    const prosecution:Prosecution=req.body;
+    client.sendText(prosecution.groupId as ChatId,prosecutionDecided(prosecution));
   });
   app.post("/prosecution_appealed", async (req, res) => {});
   app.post("/prosecution_appeal_decided", async (req, res) => {});
