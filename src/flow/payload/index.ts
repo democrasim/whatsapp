@@ -1,5 +1,5 @@
 import clientModule from "@/index";
-import { ChatId, MessageId } from "@open-wa/wa-automate";
+import { ChatId, MessageId, MessageTypes } from "@open-wa/wa-automate";
 
 export async function writePayload(messageId: MessageId, payload: any) {
   const { client } = clientModule;

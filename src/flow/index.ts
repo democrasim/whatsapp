@@ -64,7 +64,8 @@ export type AskCall = (
   error?: string,
   buttons?: string[],
   title?: string,
-  footer?: string
+  footer?: string,
+  buttonIdPayload?: string
 ) => Promise<Response>;
 
 export type Flow = (
@@ -107,7 +108,8 @@ export async function awaitResponse(
   error?: string,
   buttons?: string[],
   title?: string,
-  footer?: string
+  footer?: string,
+  buttonIdPayload?: string
 ): Promise<Response> {
   let sentId: MessageId;
   if (buttons) {
@@ -117,7 +119,7 @@ export async function awaitResponse(
       buttons.map((button, i) => {
         return {
           text: button,
-          id: "" + i,
+          id: buttonIdPayload ?? i + "",
         };
       }),
       title!,
@@ -130,7 +132,8 @@ export async function awaitResponse(
   const collector = client.createMessageCollector(
     chatId,
     (received: Message) =>
-      received.type === MessageTypes.TEXT &&
+      (received.type === MessageTypes.TEXT ||
+        received.type === MessageTypes.BUTTONS_RESPONSE) &&
       !!received.quotedMsg &&
       received.sender.id === userId &&
       received.quotedMsg.id === sentId,
@@ -208,20 +211,22 @@ function isFlow(flow: RegisteredFlow, message: Message) {
 }
 
 async function recieveFlow(message: Message, client: Client) {
-  if (message.type !== MessageTypes.TEXT) return;
+  if (
+    message.type !== MessageTypes.TEXT &&
+    message.type != MessageTypes.BUTTONS_RESPONSE
+  )
+    return;
 
   const [identifier, ...args] = message.content.split(" ");
 
   const found = flowStore.flows.find(
     (flow) =>
-      message.type === MessageTypes.TEXT &&
-      (`$${flow.options.identifier}` === identifier ||
-        (flow.options.aliases &&
-          flow.options.aliases.some(
-            (alias) =>
-              `${flow.options.aliasWithDollar ? "$" : ""}${alias}` ===
-              identifier
-          )))
+      `$${flow.options.identifier}` === identifier ||
+      (flow.options.aliases &&
+        flow.options.aliases.some(
+          (alias) =>
+            `${flow.options.aliasWithDollar ? "$" : ""}${alias}` === identifier
+        ))
   );
   if (!found) return;
   // this means we found the flow, we can now error.
@@ -256,7 +261,7 @@ async function recieveFlow(message: Message, client: Client) {
         content,
         payload
       )),
-    async (content, check, error, buttons, title, footer) => {
+    async (content, check, error, buttons, title, footer, buttonIdPayload) => {
       const response = await awaitResponse(
         client,
         message.chatId,
@@ -267,7 +272,8 @@ async function recieveFlow(message: Message, client: Client) {
         error,
         buttons,
         title,
-        footer
+        footer,
+        buttonIdPayload
       );
       lastMessageId = response.response.id;
       return response;
