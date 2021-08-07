@@ -1,12 +1,20 @@
 import { Client, ChatId, ContactId } from "@open-wa/wa-automate";
+import fetch from "node-fetch";
 import express from "express";
 import clientModule from ".";
 import { sendPayloaded } from "./flow/payload";
+import {
+  prosecutionDecided,
+  prosecutionExplanation,
+  prosecutionGroupName,
+} from "./generator/court";
 import { lawDoneAnnouncement, lawToTextAnnouncement } from "./generator/law";
-import { Law, Member } from "./types";
+import { getJudge } from "./service/courtService";
+import { Law, Member, Prosecution } from "./types";
 
 let PORT = process.env.PORT || 8081;
-let councilChat = (process.env.COUNCIL as ChatId) ?? "972544805278-1618590422@g.us";
+let councilChat =
+  (process.env.COUNCIL as ChatId) ?? "972586649222-1628023128@g.us";
 
 export default async function listenToIncomingMessages(client: Client) {
   const app = express();
@@ -90,6 +98,28 @@ ${code}
       res.sendStatus(503);
     }
   });
+
+  app.post("/new_prosecution", async (req, res) => {
+    const prosecution: Prosecution = req.body;
+    const judge = await getJudge();
+    const group = await client.createGroup(
+      prosecutionGroupName(prosecution),
+      [
+        `${prosecution.prosecutor.phone}@c.us`,
+        `${prosecution.prosecuted.phone}@c.us`,
+        `${judge!.phone}@c.us`
+      ]
+    );
+    let d: any = group.gid;
+    client.sendText(d._serialized,prosecutionExplanation(prosecution,judge!))
+    res.send(d._serialized);
+  });
+  app.post("/prosecution_decided", async (req, res) => {
+    const prosecution:Prosecution=req.body;
+    client.sendText(prosecution.groupId as ChatId,prosecutionDecided(prosecution));
+  });
+  app.post("/prosecution_appealed", async (req, res) => {});
+  app.post("/prosecution_appeal_decided", async (req, res) => {});
 
   app.listen(PORT, () => {
     console.log("(!) Now listening on port " + PORT);
