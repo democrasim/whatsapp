@@ -62,6 +62,7 @@ const flowStore: FlowStore = {
 
 export type AskCall = (
   content: string,
+  type:MessageTypes,
   check?: (message: Message) => boolean,
   error?: string,
   buttons?: string[],
@@ -105,11 +106,12 @@ export async function awaitResponse(
   userId: ContactId,
   messageId: MessageId,
   content: string,
+  type:MessageTypes,
   check?: (message: Message) => boolean,
   error?: string,
   buttons?: string[],
   title?: string,
-  footer?: string
+  footer?: string,
 ): Promise<Response> {
   let sentId: MessageId;
   if (buttons) {
@@ -132,7 +134,7 @@ export async function awaitResponse(
   const collector = client.createMessageCollector(
     chatId,
     (received: Message) =>
-      received.type === MessageTypes.TEXT &&
+      received.type === type &&
       !!received.quotedMsg &&
       received.sender.id === userId &&
       received.quotedMsg.id === sentId,

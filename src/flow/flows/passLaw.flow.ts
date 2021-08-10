@@ -8,7 +8,7 @@ import {
   Member,
   PunishmentType,
 } from "@/types";
-import { MessageId } from "@open-wa/wa-automate";
+import { MessageId, MessageTypes } from "@open-wa/wa-automate";
 import { text } from "express";
 import { Flow, RegisteredFlow, registerFlow } from "..";
 import { askBoolean, askOptional } from "../util";
@@ -58,6 +58,7 @@ const flow: Flow = async (error, send, ask, data) => {
       `איזה סוג של סעיף תרצה להוסיף?
 האופציות:
 ${typesString}`,
+      MessageTypes.TEXT,
       (message) => typeList.includes(message.content),
       `זה לא סוג מותר, אנא נסה שוב`
     );
@@ -67,7 +68,7 @@ ${typesString}`,
     };
 
     if (["FACT", "BAN", "REQUIREMENT"].includes(types[type])) {
-      let { text: description } = await ask(`בבקשה תן תיאור לסעיף הזה`);
+      let { text: description } = await ask(`בבקשה תן תיאור לסעיף הזה`,MessageTypes.TEXT);
 
       content.description = description;
     }
@@ -79,7 +80,7 @@ ${typesString}`,
       for (let i of members) {
         membersText += i.name + "\n";
       }
-      let { text: removedMemberName } = await ask(membersText);
+      let { text: removedMemberName } = await ask(membersText,MessageTypes.TEXT);
       let removedMember = members.find(
         (member) => member.name === removedMemberName
       );
@@ -90,16 +91,16 @@ ${typesString}`,
       content.member = removedMember;
     }
     if (["BAN", "REQUIREMENT"].includes(types[type])) {
-      const { text: punishment} = await ask(
+      const { text: punishment } = await ask(
         `איזה סוג של סעיף תרצה להוסיף?
   האופציות:
   ${punishmentsString}`,
         (message) => punishmentsTypes.includes(message.content),
         `זה לא סוג מותר, אנא נסה שוב`
       );
-      content.punishment={
+      content.punishment = {
         type: punishments[punishment],
-      }
+      };
     }
 
     contents.push(content);
