@@ -98,7 +98,7 @@ export async function sendResponse(
     sendPayloaded(content, payload, chatId);
     return messageId;
   }
-  return (await client.reply(chatId, content, messageId)) as MessageId;
+  return (await client.sendText(chatId, content)) as MessageId;
 }
 
 export async function awaitResponse(
@@ -123,7 +123,7 @@ export async function awaitResponse(
       buttons.map((button, i) => {
         return {
           text: button,
-          id: buttonIdPayload ?? i + "",
+          id: buttonIdPayload ?? i + "djfkghlskdjfh",
         };
       }),
       title!,
@@ -136,8 +136,7 @@ export async function awaitResponse(
   const collector = client.createMessageCollector(
     chatId,
     (received: Message) =>
-      (received.type === type ||
-        received.type === MessageTypes.BUTTONS_RESPONSE) &&
+      (received.type === type) &&
       !!received.quotedMsg &&
       received.sender.id === userId &&
       received.quotedMsg.id === sentId,
@@ -267,13 +266,14 @@ async function recieveFlow(message: Message, client: Client) {
         content,
         payload
       )),
-    async (content, check, error, buttons, title, footer, buttonIdPayload) => {
+    async (content, type, check, error, buttons, title, footer, buttonIdPayload) => {
       const response = await awaitResponse(
         client,
         message.chatId,
         message.sender.id,
         lastMessageId,
         content,
+        type,
         check,
         error,
         buttons,

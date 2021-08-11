@@ -1,11 +1,11 @@
-import { MessageId } from "@open-wa/wa-automate";
+import { MessageId, MessageTypes } from "@open-wa/wa-automate";
 import { AskCall, Response } from ".";
 
 export async function askOptional(
   ask: AskCall,
   content: string
 ): Promise<Partial<Response>> {
-  const response = await ask(`${content}. הגב עם ${"```,```"} בשביל לדלג`);
+  const response = await ask(`${content}. הגב עם ${"```,```"} בשביל לדלג`,MessageTypes.TEXT);
   const { text } = response;
 
   if (text === ",")
@@ -52,6 +52,7 @@ export async function askBoolean(
 
   const response = await ask(
     `${content} הגב עם כן/לא`,
+    MessageTypes.TEXT,
     (message) =>
       truthyStrings.includes(message.content) ||
       falsyStrings.includes(message.content),

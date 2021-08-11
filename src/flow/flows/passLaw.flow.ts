@@ -95,6 +95,7 @@ ${typesString}`,
         `איזה סוג של סעיף תרצה להוסיף?
   האופציות:
   ${punishmentsString}`,
+  MessageTypes.TEXT,
         (message) => punishmentsTypes.includes(message.content),
         `זה לא סוג מותר, אנא נסה שוב`
       );

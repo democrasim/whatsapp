@@ -2,7 +2,6 @@ import { decideProsecution, getJudge, getProsecutionByGroup } from "@/service/co
 import { vote } from "@/service/lawService";
 import { register } from "@/service/userService";
 import { VoteType } from "@/types";
-import { BlobOptions } from "buffer";
 import { Flow, registerFlow } from "..";
 import { readPayload } from "../payload";
 import { askBoolean } from "../util";
