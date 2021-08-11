@@ -14,7 +14,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
     ask(
       lawToTextAnnouncement(law),
       MessageTypes.BUTTONS_RESPONSE,
-      () => true,
+      undefined,
       undefined,
       ["בעד", "נגד", "נמנע"],
       "הצבע על חוק זה",

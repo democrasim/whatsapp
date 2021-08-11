@@ -14,7 +14,7 @@ import { Law, Member, Prosecution } from "./types";
 
 let PORT = process.env.PORT || 8081;
 let councilChat =
-  (process.env.COUNCIL as ChatId) ?? "972586649222-1628023128@g.us";
+  (process.env.COUNCIL as ChatId) ?? '972544805278-1618590422@g.us';
 
 export default async function listenToIncomingMessages(client: Client) {
   const app = express();

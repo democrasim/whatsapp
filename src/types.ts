@@ -93,14 +93,5 @@ export interface LawPropostion {
   title: string;
   legislator: string;
   anonymous: boolean;
-  fakeName: string;
   content: Content[]
-}
-
-export interface LawPropostion {
-  legislator: string;
-  title: string;
-  anonymous: boolean;
-  fakeName: string;
-  content: Content[];
 }

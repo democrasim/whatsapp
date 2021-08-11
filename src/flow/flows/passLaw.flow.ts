@@ -39,15 +39,10 @@ const flow: Flow = async (error, send, ask, data) => {
     ""
   );
 
-  let { text: name, original } = await askOptional(ask, "תן שם חתיך לחוק");
+  let { text: name, original } = await askOptional(ask, "תן שם לחוק", "תרצה לתת שם לחוק?");
   if (name === ",") name = "";
 
   let { choice: anonymous } = await askBoolean(ask, `תרצה חוק ממקור אנונימי?`);
-
-  let { text: fakeName } = await askOptional(
-    ask,
-    "הגב עם שם מזוייף בשביל שם מזוייף לחוק"
-  );
 
   const contents = [];
 
@@ -55,12 +50,13 @@ const flow: Flow = async (error, send, ask, data) => {
 
   while (addingContent) {
     const { text: type, original } = await ask(
-      `איזה סוג של סעיף תרצה להוסיף?
-האופציות:
-${typesString}`,
-      MessageTypes.TEXT,
-      (message) => typeList.includes(message.content),
-      `זה לא סוג מותר, אנא נסה שוב`
+      "איזה סוג של סעיף תרצה להוסיף?",
+      MessageTypes.BUTTONS_RESPONSE,
+      undefined,
+      undefined,
+      Object.keys(types),
+      "",
+      ""
     );
 
     const content: Content = {
@@ -74,30 +70,26 @@ ${typesString}`,
     }
     if ("REMOVE_MEMBER" === types[type]) {
       let members: Member[] = (await fetchAllMembers())!;
-      let membersText: string = "את מי תרצה להעיף";
-      membersText += "?\n";
-
-      for (let i of members) {
-        membersText += i.name + "\n";
-      }
-      let { text: removedMemberName } = await ask(membersText,MessageTypes.TEXT);
+      let { text: removedMemberName } = await ask("את מי תרצה להעיף?",
+        MessageTypes.BUTTONS_RESPONSE,
+        undefined,
+        undefined,
+        members.map(member=>member.name),
+        "","");
       let removedMember = members.find(
         (member) => member.name === removedMemberName
       );
-      if (!removedMember) {
-        error("משתמש לא קיים");
-        return;
-      }
       content.member = removedMember;
     }
     if (["BAN", "REQUIREMENT"].includes(types[type])) {
       const { text: punishment } = await ask(
-        `איזה סוג של סעיף תרצה להוסיף?
-  האופציות:
-  ${punishmentsString}`,
-  MessageTypes.TEXT,
-        (message) => punishmentsTypes.includes(message.content),
-        `זה לא סוג מותר, אנא נסה שוב`
+        "איזה סוג של סעיף תרצה להוסיף?",
+  MessageTypes.BUTTONS_RESPONSE,
+        undefined,
+        undefined,
+        punishmentsTypes,
+        "",
+        ""
       );
       content.punishment = {
         type: punishments[punishment],
@@ -113,7 +105,6 @@ ${typesString}`,
   const lawProposition: LawPropostion = {
     anonymous,
     content: contents,
-    fakeName: fakeName ?? "",
     legislator: member!.id,
     title: name ?? "",
   };
