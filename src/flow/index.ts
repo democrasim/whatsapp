@@ -17,10 +17,9 @@ import fs from "fs";
 import path from "path";
 import { Page } from "puppeteer";
 import { sendPayloaded, writePayload } from "./payload";
-import { GroupChat } from "whatsapp-web.js";
 
 const selfChat = "17622130901@c.us";
-const possibleOptions=3;
+const possibleOptions = 3;
 
 export interface Response {
   response: Message;
@@ -77,7 +76,8 @@ export type Flow = (
   send: (
     content: string,
     privately?: boolean,
-    payload?: any
+    payload?: any,
+    withoutReply?: boolean
   ) => Promise<MessageId>,
   ask: AskCall,
   data: FlowData,
@@ -90,15 +90,21 @@ export function getFlows() {
 
 export async function sendResponse(
   client: Client,
-  messageId: MessageId,
+  messageId: MessageId | boolean,
   chatId: ChatId,
   content: string,
   payload?: {}
 ): Promise<MessageId> {
   if (payload) {
-    sendPayloaded(content, payload, chatId);
-    return messageId;
+    await sendPayloaded(content, payload, chatId);
+    return (await client.getAllMessagesInChat(chatId, true, true)).pop()!.id;
   }
+  if (messageId)
+    return (await client.reply(
+      chatId,
+      content,
+      messageId as MessageId
+    )) as MessageId;
   return (await client.sendText(chatId, content)) as MessageId;
 }
 
@@ -116,27 +122,14 @@ export async function awaitResponse(
   footer?: string,
   buttonIdPayload?: string
 ): Promise<Response> {
-  let sentId: MessageId[]=[];
+  let sentId: MessageId[] = [];
   if (buttons) {
     let messagesTosend = Math.ceil(buttons.length / possibleOptions);
-    sentId.push(await client.sendButtons(
-      chatId,
-      content,
-      buttons.splice(0,possibleOptions).map((button, i) => {
-        return {
-          text: button,
-          id: buttonIdPayload ?? i + "djfkghlskdjfh",
-        };
-      }),
-      title!,
-      footer
-    ) as MessageId);
-    messagesTosend--;
-    while (messagesTosend !== 0) {
-      sentId.push(await client.sendButtons(
+    sentId.push(
+      (await client.sendButtons(
         chatId,
-        "עוד אופציות:",
-        buttons.splice(0,possibleOptions).map((button, i) => {
+        content,
+        buttons.splice(0, possibleOptions).map((button, i) => {
           return {
             text: button,
             id: buttonIdPayload ?? i + "djfkghlskdjfh",
@@ -144,7 +137,24 @@ export async function awaitResponse(
         }),
         title!,
         footer
-      ) as MessageId);
+      )) as MessageId
+    );
+    messagesTosend--;
+    while (messagesTosend !== 0) {
+      sentId.push(
+        (await client.sendButtons(
+          chatId,
+          "עוד אופציות:",
+          buttons.splice(0, possibleOptions).map((button, i) => {
+            return {
+              text: button,
+              id: buttonIdPayload ?? i + "djfkghlskdjfh",
+            };
+          }),
+          title!,
+          footer
+        )) as MessageId
+      );
       messagesTosend--;
     }
   } else {
@@ -277,10 +287,10 @@ async function recieveFlow(message: Message, client: Client) {
 
   flow(
     async (content) => await sendError(client, message, content),
-    async (content, privately = false, payload) =>
+    async (content, privately = false, payload, withoutReply) =>
       (lastMessageId = await sendResponse(
         client,
-        lastMessageId,
+        withoutReply ? false : lastMessageId,
         privately ? message.sender.id : message.chatId,
         content,
         payload

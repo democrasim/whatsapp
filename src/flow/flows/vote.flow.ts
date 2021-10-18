@@ -43,7 +43,12 @@ const flow: Flow = async (error, send, ask, data, args) => {
   const result = await vote(data.member!.id, lawId, voteType, reason);
 
   if (result) {
-    send("הצבעתך על חוק " + result?.number + " נקלטה בהצלחה", true, undefined);
+    send(
+      "הצבעתך על חוק " + result?.number + " נקלטה בהצלחה",
+      true,
+      undefined,
+      true
+    );
   }
 };
 

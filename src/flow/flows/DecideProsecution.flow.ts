@@ -1,4 +1,8 @@
-import { decideProsecution, getJudge, getProsecutionByGroup } from "@/service/courtService";
+import {
+  decideProsecution,
+  getJudge,
+  getProsecutionByGroup,
+} from "@/service/courtService";
 import { vote } from "@/service/lawService";
 import { register } from "@/service/userService";
 import { VoteType } from "@/types";
@@ -19,18 +23,18 @@ const flow: Flow = async (error, send, ask, data, args) => {
     נדחה: false,
   };
 
-  const judge=await getJudge();
-  if (data.member!.phone===judge!.phone+"@c.us"){
-      error("פקודה זמינה רק לשופט");
-      return;
+  const judge = await getJudge();
+  if (data.member!.phone === judge!.phone + "@c.us") {
+    error("פקודה זמינה רק לשופט");
+    return;
   }
 
   const decision = decisionToType[decisionText];
-  let prosecution=await getProsecutionByGroup(data.groupId);
-  if (!prosecution){
-      error("זוהי לא קבוצה של תביעה");
+  let prosecution = await getProsecutionByGroup(data.groupId);
+  if (!prosecution) {
+    error("זוהי לא קבוצה של תביעה");
   }
-  decideProsecution(prosecution!,decision);
+  decideProsecution(prosecution!, decision);
 };
 
 registerFlow(
