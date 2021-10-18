@@ -17,7 +17,6 @@ import fs from "fs";
 import path from "path";
 import { Page } from "puppeteer";
 import { sendPayloaded, writePayload } from "./payload";
-import { GroupChat } from "whatsapp-web.js";
 
 const selfChat = "17622130901@c.us";
 
@@ -53,7 +52,7 @@ interface FlowData {
   quoted?: Message;
   contact: Contact;
   messageId: MessageId;
-  groupId:ChatId
+  groupId: ChatId;
 }
 
 const flowStore: FlowStore = {
@@ -75,7 +74,8 @@ export type Flow = (
   send: (
     content: string,
     privately?: boolean,
-    payload?: any
+    payload?: any,
+    withoutReply?: boolean
   ) => Promise<MessageId>,
   ask: AskCall,
   data: FlowData,
@@ -88,16 +88,22 @@ export function getFlows() {
 
 export async function sendResponse(
   client: Client,
-  messageId: MessageId,
+  messageId: MessageId | boolean,
   chatId: ChatId,
   content: string,
   payload?: {}
 ): Promise<MessageId> {
   if (payload) {
-    sendPayloaded(content, payload, chatId);
-    return messageId;
+    await sendPayloaded(content, payload, chatId);
+    return (await client.getAllMessagesInChat(chatId, true, true)).pop()!.id;
   }
-  return (await client.reply(chatId, content, messageId)) as MessageId;
+  if (messageId)
+    return (await client.reply(
+      chatId,
+      content,
+      messageId as MessageId
+    )) as MessageId;
+  return (await client.sendText(chatId, content)) as MessageId;
 }
 
 export async function awaitResponse(
@@ -205,7 +211,8 @@ export function initFlows() {
       console.log("Loaded " + file);
     });
 
-  client.onAnyMessage((message: Message) => {recieveFlow(message, client);
+  client.onAnyMessage((message: Message) => {
+    recieveFlow(message, client);
     console.log(message);
   });
 }
@@ -257,10 +264,10 @@ async function recieveFlow(message: Message, client: Client) {
 
   flow(
     async (content) => await sendError(client, message, content),
-    async (content, privately = false, payload) =>
+    async (content, privately = false, payload, withoutReply) =>
       (lastMessageId = await sendResponse(
         client,
-        lastMessageId,
+        withoutReply ? false : lastMessageId,
         privately ? message.sender.id : message.chatId,
         content,
         payload
@@ -288,7 +295,7 @@ async function recieveFlow(message: Message, client: Client) {
       contact: message.sender,
       messageId: message.id,
       member,
-      groupId:message.chatId
+      groupId: message.chatId,
     },
     args
   );
