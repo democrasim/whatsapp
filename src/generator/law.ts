@@ -88,9 +88,7 @@ export function resultString(status: Status) {
 export function contentsToString(contents: Content[]) {
   let output = "";
 
-  contents.forEach(
-    (content, i) => (output += contentToString(content, i + 1) + "\n")
-  );
+  contents.forEach((content, i) => (output += contentToString(content, i + 1)));
 
   return output;
 }
