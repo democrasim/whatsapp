@@ -19,6 +19,7 @@ import { Page } from "puppeteer";
 import { sendPayloaded, writePayload } from "./payload";
 
 const selfChat = "17622130901@c.us";
+const possibleOptions = 3;
 
 export interface Response {
   response: Message;
@@ -61,6 +62,7 @@ const flowStore: FlowStore = {
 
 export type AskCall = (
   content: string,
+  type: MessageTypes,
   check?: (message: Message) => boolean,
   error?: string,
   buttons?: string[],
@@ -112,6 +114,7 @@ export async function awaitResponse(
   userId: ContactId,
   messageId: MessageId,
   content: string,
+  type: MessageTypes,
   check?: (message: Message) => boolean,
   error?: string,
   buttons?: string[],
@@ -119,32 +122,52 @@ export async function awaitResponse(
   footer?: string,
   buttonIdPayload?: string
 ): Promise<Response> {
-  let sentId: MessageId;
+  let sentId: MessageId[] = [];
   if (buttons) {
-    sentId = (await client.sendButtons(
-      chatId,
-      content,
-      buttons.map((button, i) => {
-        return {
-          text: button,
-          id: buttonIdPayload ?? i + "",
-        };
-      }),
-      title!,
-      footer
-    )) as MessageId;
+    let messagesTosend = Math.ceil(buttons.length / possibleOptions);
+    sentId.push(
+      (await client.sendButtons(
+        chatId,
+        content,
+        buttons.splice(0, possibleOptions).map((button, i) => {
+          return {
+            text: button,
+            id: buttonIdPayload ?? i + "djfkghlskdjfh",
+          };
+        }),
+        title!,
+        footer
+      )) as MessageId
+    );
+    messagesTosend--;
+    while (messagesTosend !== 0) {
+      sentId.push(
+        (await client.sendButtons(
+          chatId,
+          "עוד אופציות:",
+          buttons.splice(0, possibleOptions).map((button, i) => {
+            return {
+              text: button,
+              id: buttonIdPayload ?? i + "djfkghlskdjfh",
+            };
+          }),
+          title!,
+          footer
+        )) as MessageId
+      );
+      messagesTosend--;
+    }
   } else {
     const message = await sendResponse(client, messageId, chatId, content);
-    sentId = message;
+    sentId.push(message);
   }
   const collector = client.createMessageCollector(
     chatId,
     (received: Message) =>
-      (received.type === MessageTypes.TEXT ||
-        received.type === MessageTypes.BUTTONS_RESPONSE) &&
+      received.type === type &&
       !!received.quotedMsg &&
       received.sender.id === userId &&
-      received.quotedMsg.id === sentId,
+      sentId.includes(received.quotedMsg.id),
     {}
   );
 
@@ -161,7 +184,7 @@ export async function awaitResponse(
         collector.stop();
         resolve({
           response: collected,
-          original: sentId,
+          original: sentId[0],
           text: collected.content,
         });
       }
@@ -272,13 +295,23 @@ async function recieveFlow(message: Message, client: Client) {
         content,
         payload
       )),
-    async (content, check, error, buttons, title, footer, buttonIdPayload) => {
+    async (
+      content,
+      type,
+      check,
+      error,
+      buttons,
+      title,
+      footer,
+      buttonIdPayload
+    ) => {
       const response = await awaitResponse(
         client,
         message.chatId,
         message.sender.id,
         lastMessageId,
         content,
+        type,
         check,
         error,
         buttons,

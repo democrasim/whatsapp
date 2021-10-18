@@ -1,19 +1,23 @@
-import { MessageId } from "@open-wa/wa-automate";
+import { MessageId, MessageTypes } from "@open-wa/wa-automate";
+import { findSourceMap } from "module";
 import { AskCall, Response } from ".";
 
 export async function askOptional(
   ask: AskCall,
-  content: string
+  content: string,
+  optionChoiseText:string
 ): Promise<Partial<Response>> {
-  const response = await ask(`${content}. הגב עם ${"```,```"} בשביל לדלג`);
-  const { text } = response;
-
-  if (text === ",")
+  const choice=(await askBoolean(ask,optionChoiseText)).choice;
+  if (!choice){
     return {
-      ...response,
       text: undefined,
     };
-
+  }
+  const response = await ask(
+    content,
+    MessageTypes.TEXT
+  );
+  const { text } = response;
   return {
     ...response,
     text,
@@ -24,46 +28,22 @@ export async function askBoolean(
   ask: AskCall,
   content: string
 ): Promise<Response & { choice: boolean }> {
-  const truthyStrings = [
-    "כן",
-    "בהחלט",
-    "ברור",
-    "לגמרי",
-    "יאללה",
-    "כ",
-    "true",
-    "כןכן",
-    "שמואל",
-  ];
-
-  const falsyStrings = [
-    "לא",
-    "לא בתחום",
-    "לא קול",
-    "בכלל לא",
-    "האם שרבי רזה",
-    "ל",
-    "!",
-    "כלל לא",
-    "בזוי",
-    "אל",
-    "תתאבד",
-  ];
-
   const response = await ask(
-    `${content} הגב עם כן/לא`,
-    (message) =>
-      truthyStrings.includes(message.content) ||
-      falsyStrings.includes(message.content),
-    "לא הבנתי אם זה כן או לא, נסה שוב"
+    content,
+    MessageTypes.BUTTONS_RESPONSE,
+    undefined,
+    undefined,
+    ["כן", "לא"],
+    "",
+    ""
   );
 
-  if (truthyStrings.includes(response.text))
+  if (response.text === "כן")
     return {
       ...response,
       choice: true,
     };
-  if (falsyStrings.includes(response.text))
+  if (response.text === "לא")
     return {
       ...response,
       choice: false,

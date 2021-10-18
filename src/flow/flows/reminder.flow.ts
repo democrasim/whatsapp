@@ -4,6 +4,7 @@ import { fetchAllMembers } from "@/service/userService";
 import { getLawsUnvoted } from "@/service/lawService";
 import { Flow, registerFlow } from "..";
 import { lawDisplay, lawToTextAnnouncement } from "@/generator/law";
+import { MessageTypes } from "@open-wa/wa-automate";
 
 const flow: Flow = async (error, send, ask, data, args) => {
   let laws = await getLawsUnvoted(data.member!.id);
@@ -12,7 +13,8 @@ const flow: Flow = async (error, send, ask, data, args) => {
   laws!.forEach((law) => {
     ask(
       lawToTextAnnouncement(law),
-      () => true,
+      MessageTypes.BUTTONS_RESPONSE,
+      undefined,
       undefined,
       ["בעד", "נגד", "נמנע"],
       "הצבע על חוק זה",

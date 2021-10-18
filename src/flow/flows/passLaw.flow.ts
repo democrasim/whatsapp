@@ -8,7 +8,7 @@ import {
   Member,
   PunishmentType,
 } from "@/types";
-import { MessageId } from "@open-wa/wa-automate";
+import { MessageId, MessageTypes } from "@open-wa/wa-automate";
 import { text } from "express";
 import { Flow, RegisteredFlow, registerFlow } from "..";
 import { askBoolean, askOptional } from "../util";
@@ -39,15 +39,10 @@ const flow: Flow = async (error, send, ask, data) => {
     ""
   );
 
-  let { text: name, original } = await askOptional(ask, "תן שם חתיך לחוק");
+  let { text: name, original } = await askOptional(ask, "תן שם לחוק", "תרצה לתת שם לחוק?");
   if (name === ",") name = "";
 
   let { choice: anonymous } = await askBoolean(ask, `תרצה חוק ממקור אנונימי?`);
-
-  let { text: fakeName } = await askOptional(
-    ask,
-    "הגב עם שם מזוייף בשביל שם מזוייף לחוק"
-  );
 
   const contents = [];
 
@@ -55,11 +50,13 @@ const flow: Flow = async (error, send, ask, data) => {
 
   while (addingContent) {
     const { text: type, original } = await ask(
-      `איזה סוג של סעיף תרצה להוסיף?
-האופציות:
-${typesString}`,
-      (message) => typeList.includes(message.content),
-      `זה לא סוג מותר, אנא נסה שוב`
+      "איזה סוג של סעיף תרצה להוסיף?",
+      MessageTypes.BUTTONS_RESPONSE,
+      undefined,
+      undefined,
+      Object.keys(types),
+      "",
+      ""
     );
 
     const content: Content = {
@@ -67,39 +64,36 @@ ${typesString}`,
     };
 
     if (["FACT", "BAN", "REQUIREMENT"].includes(types[type])) {
-      let { text: description } = await ask(`בבקשה תן תיאור לסעיף הזה`);
+      let { text: description } = await ask(`בבקשה תן תיאור לסעיף הזה`,MessageTypes.TEXT);
 
       content.description = description;
     }
     if ("REMOVE_MEMBER" === types[type]) {
       let members: Member[] = (await fetchAllMembers())!;
-      let membersText: string = "את מי תרצה להעיף";
-      membersText += "?\n";
-
-      for (let i of members) {
-        membersText += i.name + "\n";
-      }
-      let { text: removedMemberName } = await ask(membersText);
+      let { text: removedMemberName } = await ask("את מי תרצה להעיף?",
+        MessageTypes.BUTTONS_RESPONSE,
+        undefined,
+        undefined,
+        members.map(member=>member.name),
+        "","");
       let removedMember = members.find(
         (member) => member.name === removedMemberName
       );
-      if (!removedMember) {
-        error("משתמש לא קיים");
-        return;
-      }
       content.member = removedMember;
     }
     if (["BAN", "REQUIREMENT"].includes(types[type])) {
-      const { text: punishment} = await ask(
-        `איזה סוג של סעיף תרצה להוסיף?
-  האופציות:
-  ${punishmentsString}`,
-        (message) => punishmentsTypes.includes(message.content),
-        `זה לא סוג מותר, אנא נסה שוב`
+      const { text: punishment } = await ask(
+        "איזה סוג של סעיף תרצה להוסיף?",
+  MessageTypes.BUTTONS_RESPONSE,
+        undefined,
+        undefined,
+        punishmentsTypes,
+        "",
+        ""
       );
-      content.punishment={
+      content.punishment = {
         type: punishments[punishment],
-      }
+      };
     }
 
     contents.push(content);
@@ -111,7 +105,6 @@ ${typesString}`,
   const lawProposition: LawPropostion = {
     anonymous,
     content: contents,
-    fakeName: fakeName ?? "",
     legislator: member!.id,
     title: name ?? "",
   };

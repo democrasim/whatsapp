@@ -1,3 +1,4 @@
+import { MessageTypes } from "@open-wa/wa-automate";
 import { Flow, registerFlow } from "..";
 import { askBoolean } from "../util";
 
@@ -7,6 +8,7 @@ const flow: Flow = async (error, send, ask, data) => {
   if (choice) {
     const { text } = await ask(
       "מה שמך ידידי הטוב?",
+      MessageTypes.TEXT,
       undefined,
       undefined,
       ["משה", "חיים", "הפצועה של שמואל"],

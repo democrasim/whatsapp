@@ -2,6 +2,7 @@ import { lawDisplay } from "@/generator/law";
 import { lawByNumber, vote } from "@/service/lawService";
 import { register } from "@/service/userService";
 import { VoteType } from "@/types";
+import { MessageTypes } from "@open-wa/wa-automate";
 import { isNumber, parseInt } from "lodash";
 import { Flow, registerFlow } from "..";
 import { readPayload } from "../payload";
@@ -21,6 +22,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
     numberText = (
       await ask(
         "מה מספר החוק שתרצה להציג עבורו נתונים?",
+        MessageTypes.TEXT,
         (message) => !isNaN(+message.content),
         "זה לא מספר ידידי, נסה שוב"
       )

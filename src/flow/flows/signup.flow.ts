@@ -1,40 +1,38 @@
 import { register } from "@/service/userService";
+import { MessageTypes } from "@open-wa/wa-automate";
 import { Flow, registerFlow } from "..";
 import { askBoolean } from "../util";
 
 const flow: Flow = async (error, send, ask, data, args) => {
-    
-    let name = '';
+  let name = "";
 
-    if (data.member) {
-        error('אתה כבר משתמש רשום');
+  if (data.member) {
+    error("אתה כבר משתמש רשום");
 
-        return;
-    }
+    return;
+  }
 
-    if (args.length === 0) {
-        name = (await ask('מהו שמך?')).text;
-    } else {
-        name = args.join(' ');
-    }
+  if (args.length === 0) {
+    name = (await ask("מהו שמך?", MessageTypes.TEXT)).text;
+  } else {
+    name = args.join(" ");
+  }
 
-    const { text: reason } = await ask('למה אתה מעוניין להצטרף?')
+  const { text: reason } = await ask("למה אתה מעוניין להצטרף?", MessageTypes.TEXT);
 
-    const result = await register(
-        name,
-        data.contact.id.split("@")[0],
-        reason
-    );
+  const result = await register(name, data.contact.id.split("@")[0], reason);
 
-    if (result) send(`חוק לצירופך הוצע בהצלחה עם המספר #${result.number}`);
+  if (result) send(`חוק לצירופך הוצע בהצלחה עם המספר #${result.number}`);
+};
 
-}
-
-registerFlow({
+registerFlow(
+  {
     memberOnly: false,
     privateOnly: true,
-    identifier: 'הרשמה',
-    description: 'פקודה בשביל להירשם',
-    usage: '$הרשמה [שם?]',
-    name: 'הרשמה',
-}, flow)
+    identifier: "הרשמה",
+    description: "פקודה בשביל להירשם",
+    usage: "$הרשמה [שם?]",
+    name: "הרשמה",
+  },
+  flow
+);

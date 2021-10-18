@@ -3,10 +3,11 @@ import { prosecute } from "@/service/courtService";
 import { lawByNumber } from "@/service/lawService";
 import { fetchAllMembers } from "@/service/userService";
 import { Content } from "@/types";
+import { MessageTypes } from "@open-wa/wa-automate";
 import { Flow, registerFlow } from "..";
 
 const flow: Flow = async (error, send, ask, data, args) => {
-  let lawNumberString = (await ask("בעבור איזה חוק תרצה לתבוע?")).text;
+  let lawNumberString = (await ask("בעבור איזה חוק תרצה לתבוע?",MessageTypes.TEXT)).text;
   if (isNaN(+lawNumberString)) {
     error(`'${lawNumberString}' אינו מספר תקין`);
     return;
@@ -40,7 +41,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
       .join("\n");
     let selection = (
       await ask(
-        "כתוב את מספר הסעיף איתו תרצה לתבוע" + "\n" + possibleContentsString
+        "כתוב את מספר הסעיף איתו תרצה לתבוע" + "\n" + possibleContentsString,MessageTypes.TEXT
       )
     ).text;
     if (isNaN(+selection)) {
@@ -51,7 +52,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
   }
   let members = (await fetchAllMembers())!;
   let prosecutedName = (
-    await ask("את מי תרצה לתבוע?" + displayMembersNames(members))
+    await ask("את מי תרצה לתבוע?" + displayMembersNames(members),MessageTypes.TEXT)
   ).text;
   if (members.filter((member) => member.name === prosecutedName).length === 0) {
     error("לא קיים");
@@ -60,7 +61,7 @@ const flow: Flow = async (error, send, ask, data, args) => {
   let prosecuted = members.filter(
     (member) => member.name === prosecutedName
   )[0];
-  let reason = (await ask("מה הסיבה לתביעה?")).text;
+  let reason = (await ask("מה הסיבה לתביעה?",MessageTypes.TEXT)).text;
 
   prosecute(
     law.id,
