@@ -90,7 +90,7 @@ export function getFlows() {
 
 export async function sendResponse(
   client: Client,
-  messageId: MessageId | boolean,
+  messageId: MessageId | boolean | undefined,
   chatId: ChatId,
   content: string,
   payload?: {}
@@ -99,12 +99,7 @@ export async function sendResponse(
     await sendPayloaded(content, payload, chatId);
     return (await client.getAllMessagesInChat(chatId, true, true)).pop()!.id;
   }
-  if (messageId)
-    return (await client.reply(
-      chatId,
-      content,
-      messageId as MessageId
-    )) as MessageId;
+
   return (await client.sendText(chatId, content)) as MessageId;
 }
 
@@ -112,7 +107,7 @@ export async function awaitResponse(
   client: Client,
   chatId: ChatId,
   userId: ContactId,
-  messageId: MessageId,
+  messageId: MessageId | undefined,
   content: string,
   type: MessageTypes,
   check?: (message: Message) => boolean,
@@ -158,7 +153,12 @@ export async function awaitResponse(
       messagesTosend--;
     }
   } else {
-    const message = await sendResponse(client, messageId, chatId, content);
+    const message = await sendResponse(
+      client,
+      type === MessageTypes.TEXT ? messageId : undefined,
+      chatId,
+      content
+    );
     sentId.push(message);
   }
   const collector = client.createMessageCollector(
@@ -309,7 +309,7 @@ async function recieveFlow(message: Message, client: Client) {
         client,
         message.chatId,
         message.sender.id,
-        lastMessageId,
+        message.type === MessageTypes.TEXT ? lastMessageId : undefined,
         content,
         type,
         check,
