@@ -14,7 +14,7 @@ import { Law, Member, Prosecution } from "./types";
 
 let PORT = process.env.PORT || 8081;
 let councilChat =
-  (process.env.COUNCIL as ChatId) ?? '972544805278-1618590422@g.us';
+  (process.env.COUNCIL as ChatId) ?? "972544805278-1619896721@g.us";
 
 export default async function listenToIncomingMessages(client: Client) {
   const app = express();
@@ -102,21 +102,21 @@ ${code}
   app.post("/new_prosecution", async (req, res) => {
     const prosecution: Prosecution = req.body;
     const judge = await getJudge();
-    const group = await client.createGroup(
-      prosecutionGroupName(prosecution),
-      [
-        `${prosecution.prosecutor.phone}@c.us`,
-        `${prosecution.prosecuted.phone}@c.us`,
-        `${judge!.phone}@c.us`
-      ]
-    );
+    const group = await client.createGroup(prosecutionGroupName(prosecution), [
+      `${prosecution.prosecutor.phone}@c.us`,
+      `${prosecution.prosecuted.phone}@c.us`,
+      `${judge!.phone}@c.us`,
+    ]);
     let d: any = group.gid;
-    client.sendText(d._serialized,prosecutionExplanation(prosecution,judge!))
+    client.sendText(d._serialized, prosecutionExplanation(prosecution, judge!));
     res.send(d._serialized);
   });
   app.post("/prosecution_decided", async (req, res) => {
-    const prosecution:Prosecution=req.body;
-    client.sendText(prosecution.groupId as ChatId,prosecutionDecided(prosecution));
+    const prosecution: Prosecution = req.body;
+    client.sendText(
+      prosecution.groupId as ChatId,
+      prosecutionDecided(prosecution)
+    );
   });
   app.post("/prosecution_appealed", async (req, res) => {});
   app.post("/prosecution_appeal_decided", async (req, res) => {});
