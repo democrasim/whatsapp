@@ -5,18 +5,15 @@ import { AskCall, Response } from ".";
 export async function askOptional(
   ask: AskCall,
   content: string,
-  optionChoiseText:string
+  optionChoiseText: string
 ): Promise<Partial<Response>> {
-  const choice=(await askBoolean(ask,optionChoiseText)).choice;
-  if (!choice){
+  const choice = (await askBoolean(ask, optionChoiseText)).choice;
+  if (!choice) {
     return {
       text: undefined,
     };
   }
-  const response = await ask(
-    content,
-    MessageTypes.TEXT
-  );
+  const response = await ask(content, MessageTypes.TEXT);
   const { text } = response;
   return {
     ...response,
