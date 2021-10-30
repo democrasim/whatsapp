@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/danbinnun1/democrasim-whatsapp#readme",
   "dependencies": {
-    "@open-wa/wa-automate": "^4.14.0",
+    "@open-wa/wa-automate": "4.23.6",
     "dayjs": "^1.10.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
